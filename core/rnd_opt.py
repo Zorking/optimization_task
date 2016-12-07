@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 
 def rnd_opt():
+    # k=7 m = 13 a0=1
     k, m, a0 = raw_input('Input!!! ').split()
     k = float(k)
     m = int(m)
@@ -33,8 +35,27 @@ def rnd_opt():
     dispersion = x / m
     print 'dispersion: %s' % dispersion
 
-    size = 50 * np.random.randn(1000)
-    colors = np.random.rand(1000)
+    area = np.pi * (15 * np.random.rand(m)) ** 2
+    colors = np.random.rand(m)
 
-    plt.scatter(array_z, array_a, s=size, c=colors)
+    plt.scatter(array_z, array_a, s=area, c=colors)
     plt.show()
+
+    plt.hist(array_z, 10)
+    plt.show()
+
+    rkor_arr = []
+    for k in range(1, m):
+        rkor = expectation * (array_z[k] * array_z[k - 1]) - expectation * array_z[k] * expectation * array_z[
+            k - 1] / math.sqrt(
+            dispersion * array_z[k] * dispersion * array_z[k - 1])
+        rkor_arr.append(rkor)
+
+    print rkor_arr
+    output = {'input': [k, m, a0],
+              'array_a': array_a,
+              'array_z': array_z,
+              'expectation': expectation,
+              'dispersion': dispersion,
+              'rkor_arr': rkor_arr}
+    return output
