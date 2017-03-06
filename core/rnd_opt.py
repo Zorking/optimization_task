@@ -1,61 +1,69 @@
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+__author__ = 'vadim'
 
-def rnd_opt():
-    # k=7 m = 13 a0=1
-    k, m, a0 = raw_input('Input!!! ').split()
-    k = float(k)
-    m = int(m)
-    a0 = float(a0)
+logger = logging.getLogger(__name__)
+
+def main(multiplier, module, init_value):
+    array_z, rnd_numbers = calculate_rnd_numbers(init_value, module, multiplier)
+    logger.info('Random numbers: %s' % rnd_numbers)
+    logger.info('Array Z: %s' % array_z)
+    dispersion, expectation = calculate_expect_and_dispersion(array_z, module)
+    logger.info('Math Expectation: %s' % expectation)
+    logger.info('Dispersion: %s' % dispersion)
+    draw_graphics(array_z, module, rnd_numbers)
+    rkor_arr = calculate_coefficient_kor(array_z, dispersion, expectation, module)
+    logger.info('Correlation Coefficient: %s' % str(rkor_arr)) # TODO: wrong
+
+
+def calculate_rnd_numbers(init_value, module, multiplier):
     array_z = []
-    array_a = []
-    array_a.append(a0)
-    array_z.append(a0 / m)
-    a = (k * a0) % m
-    array_a.append(a)
-    z = a / m
+    rnd_numbers = []
+    rnd_numbers.append(init_value)
+    array_z.append(init_value / module)
+    previous_rnd_number = (multiplier * init_value) % module
+    rnd_numbers.append(previous_rnd_number)
+    z = previous_rnd_number / module
     array_z.append(z)
-    for i in range(2, m):
-        a = (k * array_a[i - 1]) % m
-        array_a.append(a)
-        z = array_a[i] / m
+    for i in range(2, module):
+        previous_rnd_number = (multiplier * rnd_numbers[i - 1]) % module
+        rnd_numbers.append(previous_rnd_number)
+        z = rnd_numbers[i] / module
         array_z.append(z)
+    return array_z, rnd_numbers
 
-    print array_a
-    print array_z
-    expectation = sum(array_z) / m
-    print 'expectation: %s' % expectation
+
+def calculate_expect_and_dispersion(array_z, module):
+    expectation = sum(array_z) / module
     x = 0
-    for j in range(0, m):
-        x = (array_z[j] - m)
-        x = x + x
+    for j in range(0, module):
+        x = (array_z[j] - expectation) ** 2
+    dispersion = x / (module - 1)
+    return dispersion, expectation
 
-    dispersion = x / m
-    print 'dispersion: %s' % dispersion
 
-    area = np.pi * (15 * np.random.rand(m)) ** 2
-    colors = np.random.rand(m)
-
-    plt.scatter(array_z, array_a, s=area, c=colors)
+def draw_graphics(array_z, module, rnd_numbers):
+    area = np.pi * (15 * np.random.rand(module)) ** 2
+    colors = np.random.rand(module)
+    plt.scatter(array_z, rnd_numbers, s=area, c=colors)
     plt.show()
-
     plt.hist(array_z, 10)
     plt.show()
 
-    rkor_arr = []
-    for k in range(1, m):
-        rkor = expectation * (array_z[k] * array_z[k - 1]) - expectation * array_z[k] * expectation * array_z[
-            k - 1] / math.sqrt(
-            dispersion * array_z[k] * dispersion * array_z[k - 1])
-        rkor_arr.append(rkor)
 
-    print rkor_arr
-    output = {'input': [k, m, a0],
-              'array_a': array_a,
-              'array_z': array_z,
-              'expectation': expectation,
-              'dispersion': dispersion,
-              'rkor_arr': rkor_arr}
-    return output
+def calculate_coefficient_kor(array_z, dispersion, expectation, module):
+    rkor_arr = []
+    for multiplier in range(1, module):
+        rkor = expectation * (array_z[multiplier] * array_z[multiplier - 1]) - expectation * array_z[
+            multiplier] * expectation * array_z[multiplier - 1] / math.sqrt(
+            dispersion * array_z[multiplier] * dispersion * array_z[multiplier - 1])
+        rkor_arr.append(rkor)
+    return rkor_arr
+
+if __name__ == '__main__':
+    multiplier, module, init_value = raw_input('Enter multiplier, module and init_value:\n')
+    multiplier, module, init_value = float(multiplier), int(module), float(init_value)
+    main(multiplier, module, init_value)
