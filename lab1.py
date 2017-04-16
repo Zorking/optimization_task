@@ -1,6 +1,5 @@
 import logging
 import matplotlib.pyplot as plt
-from scipy.stats.stats import pearsonr
 import numpy as np
 
 __author__ = 'vadim'
@@ -10,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 def main(multiplier, module, init_value):
     array_z, rnd_numbers = calculate_rnd_numbers(init_value, module, multiplier)
-    logger.info('Random numbers: %s' % rnd_numbers)
-    logger.info('Array Z: %s' % array_z)
+    print('Random numbers: %s' % rnd_numbers)
+    print('Array Z: %s' % array_z)
     dispersion, expectation = calculate_expect_and_dispersion(array_z, module)
-    logger.info('Math Expectation: %s' % expectation)
-    logger.info('Dispersion: %s' % dispersion)
-    draw_graphics(array_z, module, rnd_numbers)
-    rkor = pearsonr(array_z, rnd_numbers)[0]
-    logger.info('Correlation Coefficient: %s' % rkor)
+    print('Math Expectation: %s' % expectation)
+    print('Dispersion: %s' % dispersion)
+    draw_graphics(array_z)
+    rkor2, rkor10 = calculate_rkor(array_z)
+    print('Correlation Coefficient 2: %s\nCorrelation Coefficient 10: %s' % (rkor2, rkor10))
 
 
 def calculate_rnd_numbers(init_value, module, multiplier):
@@ -41,20 +40,43 @@ def calculate_expect_and_dispersion(array_z, module):
     x = 0
     for j in range(0, module):
         x = (array_z[j] - expectation) ** 2
+        x += x
     dispersion = x / (module - 1)
     return dispersion, expectation
 
 
-def draw_graphics(array_z, module, rnd_numbers):
-    area = np.pi * (15 * np.random.rand(module)) ** 2
-    colors = np.random.rand(module)
-    plt.scatter(array_z, rnd_numbers, s=area, c=colors)
+def draw_graphics(array_z):
+    area = 20
+    colors = np.random.rand(len(array_z))
+    plt.scatter(array_z, range(0,len(array_z)), s=area, c=colors)
     plt.show()
     plt.hist(array_z, 10)
     plt.show()
 
 
+def calculate_rkor(array_z):
+    rkor2_arr = []
+    rkor10_arr = []
+    for i, z in enumerate(array_z):
+        try:
+            rkor2_arr.append(z*array_z[i+2])
+        except IndexError:
+            break
+        try:
+            rkor10_arr.append(z * array_z[i + 10])
+        except IndexError:
+            pass
+
+    rkor2 = (12.0/(577.0-2.0)*sum(rkor2_arr)) - 3.0
+    rkor10 = (12.0/(577.0-10.0)*sum(rkor2_arr)) - 3.0
+    return rkor2, rkor10
+
+
 if __name__ == '__main__':
-    multiplier, module, init_value = raw_input('Enter multiplier, module and init_value:\n')
+    input_values = raw_input('Enter multiplier, module and init_value:\n')
+    if not input_values:
+        main(337.0, 577, 1.0)  # default values
+        exit(0)
+    multiplier, module, init_value = input_values.split()
     multiplier, module, init_value = float(multiplier), int(module), float(init_value)
     main(multiplier, module, init_value)
