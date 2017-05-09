@@ -20,7 +20,10 @@ def main(multiplier, module, init_value, y):
     rkor2, rkor10 = calculate_rkor(array_z)
     print('Correlation Coefficient 2: %s\nCorrelation Coefficient 10: %s' % (rkor2, rkor10))
     # exponential_distribution(array_z, y, module)
-    erlang_distribution(array_z, y, module, k=9)
+    # erlang_distribution(array_z, y, module, k=9)
+    # y = 2
+    # erlang_distribution2(array_z, module, y, k=8)
+    normal_distribution(array_z)
 
 
 def calculate_rnd_numbers(init_value, module, multiplier):
@@ -102,7 +105,7 @@ def erlang_distribution(array_z, y, module, k):
     Xi = []
     for z in array_z:
         Xi.append(math.e ** (-k * z))
-    Mx_er = 1/float(y)
+    Mx_er = 1 / float(y)
     xi = []
     for z in array_z:
         xi.append(sum(array_z) - Mx_er * np.log10(z))
@@ -116,12 +119,35 @@ def erlang_distribution(array_z, y, module, k):
             k_diap.append(x * Xi[i + 10])
         except IndexError:
             continue
-    D_exp = sum(M_exp_Xi)/T
+    D_exp = sum(M_exp_Xi) / T
     plt.plot(Xi, array_z, 'go')
     plt.draw()
 
 
+def erlang_distribution2(array_z, module, y, k):
+    xi = []
+    for i, z in enumerate(array_z):
+        xi.append(sum(array_z[i:i + k]) - (1 / float(y)) * np.log(z))
+    Mx_erl = k / y
+    Dx_erl = k / y ** 2
+    T = module - 1
+    Mexp = sum(xi) / T
+    diap_k = []
+    M_exp_Xi = []
+    for i, x in enumerate(xi):
+        diap_k.append(sum(xi[i:i + k]))
+        M_exp_Xi.append((Mexp-x)**2)
+    D_exp = sum(M_exp_Xi)/T
+    plt.plot(xi, array_z, 'go')
+    plt.draw()
 
+def normal_distribution(array_z, k=12):
+    Xi = []
+    for i, z in enumerate(array_z):
+        Xi.append(sum(array_z[i:i + k]) - 6)
+    print Xi
+    plt.plot(Xi, array_z, 'go')
+    plt.draw()
 
 if __name__ == '__main__':
     # input_values = raw_input('Enter multiplier, module and init_value:\n')
