@@ -3,6 +3,7 @@ import logging
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 __author__ = 'vadim'
 
@@ -23,7 +24,9 @@ def main(multiplier, module, init_value, y):
     # erlang_distribution(array_z, y, module, k=9)
     # y = 2
     # erlang_distribution2(array_z, module, y, k=8)
-    normal_distribution(array_z)
+    # normal_distribution(array_z)
+    lab3(module)
+
 
 
 def calculate_rnd_numbers(init_value, module, multiplier):
@@ -136,10 +139,11 @@ def erlang_distribution2(array_z, module, y, k):
     M_exp_Xi = []
     for i, x in enumerate(xi):
         diap_k.append(sum(xi[i:i + k]))
-        M_exp_Xi.append((Mexp-x)**2)
-    D_exp = sum(M_exp_Xi)/T
+        M_exp_Xi.append((Mexp - x) ** 2)
+    D_exp = sum(M_exp_Xi) / T
     plt.plot(xi, array_z, 'go')
     plt.draw()
+
 
 def normal_distribution(array_z, k=12):
     Xi = []
@@ -148,6 +152,39 @@ def normal_distribution(array_z, k=12):
     print Xi
     plt.plot(Xi, array_z, 'go')
     plt.draw()
+
+
+'''
+LAB 3
+'''
+
+
+def lab3(module):
+    p_arr = [0.16, 0.32, 0.15, 0.21, 0.02, 0.07, 0.07]
+    x_arr = [5.6, 2.01, 100, 157, 208, 0.5, 4.6]
+    T = module - 1
+    v_arr = []
+    exp = []
+    for p in p_arr:
+        v = p * T
+        v_arr.append(v)
+        exp.append(v/float(T))
+    N = 7
+    menMeans = p_arr
+    womenMeans = exp
+    ind = np.arange(N)  # the x locations for the groups
+    width = 0.35  # the width of the bars: can also be len(x) sequence
+
+    p1 = plt.bar(ind, menMeans, width, color='#d62728')
+    p2 = plt.bar(ind, womenMeans, width,
+                 bottom=menMeans)
+
+    plt.xticks(ind, ('1', '2', '3', '4', '5', '6', '7'))
+    plt.yticks(np.arange(0, 0.7, 0.1))
+    # plt.legend((p1[0], p2[0]))
+
+    plt.show()
+
 
 if __name__ == '__main__':
     # input_values = raw_input('Enter multiplier, module and init_value:\n')
