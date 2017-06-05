@@ -1,32 +1,36 @@
+# coding: utf-8
+
 import logging
 
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-import time
 
 __author__ = 'vadim'
 
 logger = logging.getLogger(__name__)
 
+'''
+Лабораторная №1: генератор случайных чисел
+'''
+
 
 def main(multiplier, module, init_value, y):
     array_z, rnd_numbers = calculate_rnd_numbers(init_value, module, multiplier)
-    print('Random numbers: %s' % rnd_numbers)
-    print('Array Z: %s' % array_z)
+    print('Полученные случайные числа: %s' % rnd_numbers)
+    print('Лист Z: %s' % array_z)
     dispersion, expectation = calculate_expect_and_dispersion(array_z, module)
-    print('Math Expectation: %s' % expectation)
-    print('Dispersion: %s' % dispersion)
-    # draw_graphics(array_z)
+    print('Математическое ожидание: %s' % expectation)
+    print('Дисперсия: %s' % dispersion)
+    draw_graphics(array_z)
     rkor2, rkor10 = calculate_rkor(array_z)
-    print('Correlation Coefficient 2: %s\nCorrelation Coefficient 10: %s' % (rkor2, rkor10))
-    # exponential_distribution(array_z, y, module)
-    # erlang_distribution(array_z, y, module, k=9)
-    # y = 2
-    # erlang_distribution2(array_z, module, y, k=8)
-    # normal_distribution(array_z)
+    print('Коэфициенты кореляции с 2: %s\nКоэфициенты кореляции с 10: %s' % (rkor2, rkor10))
+    exponential_distribution(array_z, y, module)
+    erlang_distribution(array_z, y, module, k=9)
+    y = 2
+    erlang_distribution2(array_z, module, y, k=8)
+    normal_distribution(array_z)
     lab3(module)
-
 
 
 def calculate_rnd_numbers(init_value, module, multiplier):
@@ -83,7 +87,7 @@ def calculate_rkor(array_z):
 
 
 '''
-LAB 2
+Лабораторная работа №2: моделирование непрерывной случайной величины
 '''
 
 
@@ -155,7 +159,7 @@ def normal_distribution(array_z, k=12):
 
 
 '''
-LAB 3
+Лабораторная работа №3: моделирование дискретной случайно величины
 '''
 
 
@@ -168,7 +172,7 @@ def lab3(module):
     for p in p_arr:
         v = p * T
         v_arr.append(v)
-        exp.append(v/float(T))
+        exp.append(v / float(T))
     N = 7
     menMeans = p_arr
     womenMeans = exp
@@ -189,7 +193,11 @@ def lab3(module):
 if __name__ == '__main__':
     # input_values = raw_input('Enter multiplier, module and init_value:\n')
     # if not input_values:
-    main(337.0, 577, 1.0, 10)  # default values
+    '''
+    Стартовые значения для проверки корректноси работы программы
+    Можно расскомментить все остальное и запустить скрипт с любыми значениями
+    '''
+    main(337.0, 577, 1.0, 10)
     exit(0)
     # multiplier, module, init_value, y = input_values.split()
     # multiplier, module, init_value, y = float(multiplier), int(module), float(init_value), int(y)
